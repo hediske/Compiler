@@ -1,5 +1,6 @@
 
 package com.mycompany.compiler.lexical_ana;
+import com.mycompany.compiler.exception.*;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ public class lexicalAnalyse {
     {
         SymbolTable.put("if",new lexic_unit("if",0,"null"));
         SymbolTable.put("else",new lexic_unit("else",0,"null"));
-        SymbolTable.put("for",new lexic_unit("for",0,"null"));
         SymbolTable.put("while",new lexic_unit("while",0,"null"));        
         
     }
@@ -25,8 +25,8 @@ public class lexicalAnalyse {
     
     
     private Boolean is_delimiter(char c)
-    {
-       return c ==' ' || c == '\n';
+    {   
+       return c ==' ' || c == '\r'  || c== '\n';
     }    
     private Boolean is_number(char c)
     {
@@ -47,19 +47,23 @@ public class lexicalAnalyse {
     }
     private Boolean is_special_caracter(char c)
     {
-        return(c=='!' || c=='?' || c == '(' || c=='}' || c=='{' || c==')');
+        return(c==':' || c==',' || c==';' ||  c=='"' || c=='?' || c == '(' || c=='}' || c=='{' || c==')');
     }
-    
-    
+    private Boolean is_operator_bool(char c){
+        return c=='|' || c=='&';
+    }
 
     public lexicalAnalyse(PushbackReader b) throws IOException {
             int character;
+            int nbrrow=1;
             while ((character = b.read()) != -1) {
                 char c = (char) character;
                 
                 
                 if( is_delimiter(c))
-                {
+                {   
+                    if(c=='\n')
+                    nbrrow++;
                     continue;
                 }
                 
@@ -209,10 +213,53 @@ public class lexicalAnalyse {
 
                      
                 }
+                else if (is_special_caracter(c)){
+                switch(c){
+                    case '"' -> ularray.add(new lexic_unit("delimstr",String.valueOf('"'),"NONE"));
+                    case ';' -> ularray.add(new lexic_unit("brpoi",";","NONE"));
+                    case ',' -> ularray.add(new lexic_unit("comma",",","NONE"));
+                    case '?' -> ularray.add(new lexic_unit("intg","?","NONE"));
+                    case ':' -> ularray.add(new lexic_unit("dblp",":","NONE"));
+                    case ')' -> ularray.add(new lexic_unit("clopar",")","NONE"));
+                    case '(' -> ularray.add(new lexic_unit("oppar","(","NONE"));
+                    case '{' -> ularray.add(new lexic_unit("cloac","}","NONE"));
+                    default -> ularray.add(new lexic_unit("oppac","{","NONE"));
+                }
+                }
                 
                 
                 
+                else if(is_operator_bool(c)){
+                    if(c=='!')
+                        ularray.add(new lexic_unit("nologic","!","NONE")); 
+                    else
+                    {                    
+                    character=b.read();
+                    if((char)character!=c)
+                    {
+                        throw( new LexicalException("Attention !! An  error occured in line "+
+                        String.valueOf(nbrrow) +
+                        " \n caracter "+String.valueOf(c) +"is not valid"));
+                    }
+                    else{
+                        switch (c) {
+                            case '|' ->ularray.add(new lexic_unit("orlogic","||","NONE"));                       
+                            default  ->ularray.add(new lexic_unit("andlogic","&&","NONE"));
+                        }
+                    }}
+                    
+                }
+                else{
+                    throw( new LexicalException("Attention !! An  error occured in line "+
+                    String.valueOf(nbrrow) +
+                    " \n caracter "+String.valueOf(c) +"is not valid"));
+                }
+                }
+
                 
+                
+                
+             
                 
                 
                 
@@ -222,8 +269,8 @@ public class lexicalAnalyse {
                 
                 
                 
-                
-                }
+            
+
                 
                 
 
