@@ -1,12 +1,12 @@
 package com.mycompany.compiler.main;
-import com.mycompany.compiler.exception.LexicalException;
+import com.mycompany.compiler.exception.*;
 import com.mycompany.compiler.lexical_ana.*;
 import java.io.PushbackReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
-
+import com.mycompany.compiler.syntax_ana.*;;
 
 
 
@@ -30,7 +30,9 @@ public class Compiler {
             ana.show_ularray();
             ana.show_lexems();
             ana.show_symbol();
-            s.close();
+            SyntaxAnalyse sn = new SyntaxAnalyse();
+            sn.ShowRules();
+            s.close();  
         }
         } catch (FileNotFoundException e) {
             System.out.println("Attenetion ! erreur dans le fichier à compiler ");

@@ -14,6 +14,7 @@
     <build>
     <plugins>
         <plugin>
+            <encoding>UTF-8</encoding>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.1.0</version>
