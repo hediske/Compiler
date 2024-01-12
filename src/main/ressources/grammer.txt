@@ -1,4 +1,4 @@
-P → D ; I
+Pro → D ; I
 D → D ; D | id : T | id : F
 T → char | int | bool | string
 F → function ( P ) : T | function () : T 
