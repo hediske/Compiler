@@ -12,9 +12,14 @@ public class lexicalAnalyse {
     private ArrayList<lexic_unit> ularray =new ArrayList<>();    
     static
     {
+        SymbolTable.put("while",new lexic_unit("while",0,"null"));        
         SymbolTable.put("if",new lexic_unit("if",0,"null"));
         SymbolTable.put("else",new lexic_unit("else",0,"null"));
-        SymbolTable.put("while",new lexic_unit("while",0,"null"));        
+        SymbolTable.put("char",new lexic_unit("char",0,"null"));        
+        SymbolTable.put("bool",new lexic_unit("bool",0,"null"));        
+        SymbolTable.put("string",new lexic_unit("string",0,"null"));        
+        SymbolTable.put("int",new lexic_unit("int",0,"null"));        
+        SymbolTable.put("function",new lexic_unit("function",0,"null"));        
         
     }
 
