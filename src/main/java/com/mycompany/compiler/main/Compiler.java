@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+
+import org.json.JSONException;
+
 import com.mycompany.compiler.syntax_ana.*;;
 
 
@@ -13,7 +16,7 @@ import com.mycompany.compiler.syntax_ana.*;;
 public class Compiler {
 
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException , JSONException {
     System.out.println("Donner votre fichier à compiler");
     Scanner s = new Scanner(System.in);
     String file =s.nextLine();

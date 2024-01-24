@@ -1,47 +1,60 @@
 package com.mycompany.compiler.syntax_ana;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.Set;
 import java.util.Iterator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.mycompany.compiler.exception.*;
 import com.mycompany.compiler.lexical_ana.lexic_unit;
 import com.mycompany.compiler.lexical_ana.lexicalAnalyse;;
 public class SyntaxAnalyse {
-    private  String[] gram = new String[]{
-        "Pro → D I",
-        "D → DL ; D | ɛ",
-        "DL → T : id | F : id",
-        "T → char | int | bool | string",
-        "F → function ( P ) : T | function ( ) : T",
-        "I → IL ; I | ɛ",
-        "IL → if ( E ) { I } IFS | while ( E ) { I } | id = E | id = function ( Par ) { I } | id = function ( ) { I }",
-        "IFS → else { I } | ɛ",
-        "E → id ( P' ) | id ( ) | EL opari E | EL opbol E | EL oprel E | opuni E | ( E ) | EL",
-        "EL → nb | id | str | litteral | true | false",
-        // "str → \" C \"",
-        // "C → litteral C | ε",
-        "P → T | T , P",
-        "P' → E | E , P'",
-        "Par → id : T | id : T , Par",
-        // "oprel → < | > | <= | >= | <> | ==",
-        // "opbol → || | &&",
-        // "opari → + | - | / | *",
-        // "opuni → ! | -"
+    private  String[] gram = new String[]{};
 
-    };
+     private String[] NonTerminal = new String[]{};
 
+    private void loadGrammar() throws IOException , JSONException{
+        String JsonFilePath = "src\\main\\ressources\\grammar.json";
+        String JsonString;
+        ArrayList<String> gram = new ArrayList<String>();
+        ArrayList<String> NonTerminal = new ArrayList<String>();
+        try{
+            JsonString = new String(Files.readAllBytes(Paths.get(JsonFilePath)));
+            JSONObject Grammar = new JSONObject(JsonString);
+            JSONArray GramElemnts =Grammar.getJSONArray("Grammar");
+            for (int i =0;i<GramElemnts.length();i++){
+                gram.add(GramElemnts.getString(i));
+            }
+            JSONArray nonterminal =Grammar.getJSONArray("NonTerminals");
+            for (int i =0;i<nonterminal.length();i++){
+                NonTerminal.add(nonterminal.getString(i));
+            }
+            this.gram=gram.toArray(new String[0]);
+            this.NonTerminal=NonTerminal.toArray(new String[0]);
+        }
+        catch(IOException e){
+            System.out.println("Error , Missing grammar JSON file !!!");
+        }
+        catch(JSONException e){
+            System.out.println("Error in your grammar details and informations !!");
+        }
 
+    }
 
-    private String[] NonTerminal = new String[]{
-     ",", ";" , ":" , "true", "false", "char" , "bool", "string", "int" , "(" , ")" , "{", "}" , "if" , "else" , "while" , "function" , "=" , "nb" ,"id" , "str" , "litteral" , "opari" , "opbol" ,"oprel" , "opuni"
-    };
-    private SLR_First_Follow sl = new SLR_First_Follow(gram,NonTerminal);
+    private SLR_First_Follow sl ;
     private SLR_Table_Parser par = null ;
-    public SyntaxAnalyse(){
+    public SyntaxAnalyse() throws IOException , JSONException{
+        loadGrammar();
+        System.out.println("---------------------GRAMMAR LOADED SUCCESSFULLY---------------------");
+        sl = new SLR_First_Follow(gram,NonTerminal);
+        for (String s : this.gram)
+        System.out.println(s);
         sl.GetFirst();
         sl.ShowFirst();
         sl.GetFollow();
@@ -126,10 +139,9 @@ public class SyntaxAnalyse {
             Stack<String> pile = new Stack<String>();
             pile.add("0");
             Queue <String> input = generateInput(  ana.getUlarray());
+            System.out.println("--------------------------------- Start Syntax Verification ----------------------------------");
             showInput(input);
             showPile(pile);
-                            System.out.println();
-
             var Action = this.par.GetAction();
             var Shift = this.par.GetShift();
             var ShiftProductions = this.par.GetShiftProductions();
@@ -143,6 +155,9 @@ public class SyntaxAnalyse {
                     pile.add(s);
                     pile.add(Action.get(indState).get(s).toString());
                     input.remove();
+                    System.out.println("Action   : SHIFT TO "+Action.get(indState).get(s));
+                    System.out.println();
+                    
                 }
                 else if (Shift.get(indState).keySet().contains(s)){
                     Iterator <Integer> iterator = Shift.get(indState).get(s).iterator();
@@ -154,7 +169,8 @@ public class SyntaxAnalyse {
                         String prod = ShiftProductions.get(rule);
                         if(prod.equals("ACC"))
                         {
-                            System.out.println("ACCEPTED!");
+                            System.out.println("Action   : ACCEPTED!");
+                            System.out.println();
                             break;
                         }
 
@@ -169,6 +185,8 @@ public class SyntaxAnalyse {
                             int x = Integer.parseInt(pile.peek());
                             pile.add(rule_ex[0]);
                             pile.add(Action.get(x).get(rule_ex[0]).toString());
+                            System.out.println("Action   : REDUCE BY "+prod);
+                            System.out.println();
                         
                     }
 
@@ -179,7 +197,6 @@ public class SyntaxAnalyse {
                 }
                 showInput(input);
                 showPile(pile);
-                System.out.println();
                 
             }
 
