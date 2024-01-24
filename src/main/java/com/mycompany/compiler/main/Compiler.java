@@ -31,7 +31,7 @@ public class Compiler {
             ana.show_lexems();
             ana.show_symbol();
             SyntaxAnalyse sn = new SyntaxAnalyse();
-            sn.ShowRules();
+            sn.CodeSyntaxAnalyze(ana);
             s.close();  
         }
         } catch (FileNotFoundException e) {

@@ -1,8 +1,13 @@
-b= 9
-a= 1
-c=a*b
-c=c+d
-h="knjl"
+
+
+
+int : a;
+int : b;
+int : c;
+a = 9;
+b= 1;
+c=a*b;
+a=c+a;
 
 
 
