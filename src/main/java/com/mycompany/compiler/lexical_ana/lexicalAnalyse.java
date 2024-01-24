@@ -12,14 +12,16 @@ public class lexicalAnalyse {
     private ArrayList<lexic_unit> ularray =new ArrayList<>();    
     static
     {
-        SymbolTable.put("while",new lexic_unit("while",0,"null"));        
-        SymbolTable.put("if",new lexic_unit("if",0,"null"));
-        SymbolTable.put("else",new lexic_unit("else",0,"null"));
-        SymbolTable.put("char",new lexic_unit("char",0,"null"));        
-        SymbolTable.put("bool",new lexic_unit("bool",0,"null"));        
-        SymbolTable.put("string",new lexic_unit("string",0,"null"));        
-        SymbolTable.put("int",new lexic_unit("int",0,"null"));        
-        SymbolTable.put("function",new lexic_unit("function",0,"null"));        
+        SymbolTable.put("while",new lexic_unit("while",0,"NONE"));        
+        SymbolTable.put("if",new lexic_unit("if",0,"NONE"));
+        SymbolTable.put("else",new lexic_unit("else",0,"NONE"));
+        SymbolTable.put("char",new lexic_unit("char",0,"NONE"));        
+        SymbolTable.put("String",new lexic_unit("String",0,"NONE"));        
+        SymbolTable.put("bool",new lexic_unit("bool",0,"NONE"));        
+        SymbolTable.put("int",new lexic_unit("int",0,"NONE"));        
+        SymbolTable.put("function",new lexic_unit("function",0,"NONE"));        
+        SymbolTable.put("true",new lexic_unit("true",0,"BOOL"));        
+        SymbolTable.put("false",new lexic_unit("false",0,"BOOL"));        
         
     }
 
@@ -57,7 +59,14 @@ public class lexicalAnalyse {
     private Boolean is_operator_bool(char c){
         return c=='|' || c=='&';
     }
+    private Boolean is_operator_unary(char c){
+        return c=='!' || c=='–';
+    }
+    private Boolean is_string(char c){
+        return c=='"';
 
+
+    }
     public lexicalAnalyse(PushbackReader b) throws IOException {
             int character;
             int nbrrow=1;
@@ -99,7 +108,7 @@ public class lexicalAnalyse {
                         }
                      }
                      String s = sb.toString();
-                     ularray.add(new lexic_unit("Number",s,"INT"));
+                     ularray.add(new lexic_unit("nb",s,"INT"));
                 }
                      
                 else if (is_letter(c))   
@@ -147,10 +156,10 @@ public class lexicalAnalyse {
                 else if(is_operator_arith(c))
                 {
                     switch (c) {
-                        case '+' -> ularray.add(new lexic_unit("add","+","NONE"));
-                        case '-' -> ularray.add(new lexic_unit("sous","-","NONE"));
-                        case '*' -> ularray.add(new lexic_unit("mult","*","NONE"));
-                        default -> ularray.add(new lexic_unit("div","+","NONE"));
+                        case '+' -> ularray.add(new lexic_unit("opari","+","NONE"));
+                        case '-' -> ularray.add(new lexic_unit("opari","-","NONE"));
+                        case '*' -> ularray.add(new lexic_unit("opari","*","NONE"));
+                        default -> ularray.add(new lexic_unit("opari","+","NONE"));
                     }
                 }
                 
@@ -163,16 +172,16 @@ public class lexicalAnalyse {
                          {
                              c =(char)character;
                              if(c=='=')
-                                 ularray.add(new lexic_unit("equ","==","NONE"));
+                                 ularray.add(new lexic_unit("oprel","==","NONE"));
                              else
                              {
                                  b.unread(character);
-                                 ularray.add(new lexic_unit("aff","=","NONE"));
+                                 ularray.add(new lexic_unit("=","=","NONE"));
                              }
                          }
                          else
                          {
-                             ularray.add(new lexic_unit("aff","=","NONE"));
+                             ularray.add(new lexic_unit("oprel","=","NONE"));
                          }
                          
                      }
@@ -183,17 +192,17 @@ public class lexicalAnalyse {
                          {
                              c =(char)character;
                             switch (c) {
-                                case '=' -> ularray.add(new lexic_unit("mse","<=","NONE"));
-                                case '>' -> ularray.add(new lexic_unit("dif","<>","NONE"));
+                                case '=' -> ularray.add(new lexic_unit("oprel","<=","NONE"));
+                                case '>' -> ularray.add(new lexic_unit("oprel","<>","NONE"));
                                 default -> {
                                     b.unread(character);
-                                    ularray.add(new lexic_unit("mst","<","NONE"));
+                                    ularray.add(new lexic_unit("oprel","<","NONE"));
                                 }
                             }
                          }
                          else
                          {
-                             ularray.add(new lexic_unit("mst","<","NONE"));
+                             ularray.add(new lexic_unit("oprel","<","NONE"));
                          }
                     } 
                     else if(c=='>')
@@ -203,16 +212,16 @@ public class lexicalAnalyse {
                          {
                              c =(char)character;
                             switch (c) {
-                                case '=' -> ularray.add(new lexic_unit("mbe",">=","NONE"));
+                                case '=' -> ularray.add(new lexic_unit("oprel",">=","NONE"));
                                 default -> {
                                     b.unread(character);
-                                    ularray.add(new lexic_unit("mbt",">","NONE"));
+                                    ularray.add(new lexic_unit("oprel",">","NONE"));
                                 }
                             }
                          }
                          else
                          {
-                            ularray.add(new lexic_unit("mbt",">","NONE"));
+                            ularray.add(new lexic_unit("oprel",">","NONE"));
                          }
                     }                        
 
@@ -220,25 +229,55 @@ public class lexicalAnalyse {
                 }
                 else if (is_special_caracter(c)){
                 switch(c){
-                    case '"' -> ularray.add(new lexic_unit("delimstr",String.valueOf('"'),"NONE"));
-                    case ';' -> ularray.add(new lexic_unit("brpoi",";","NONE"));
-                    case ',' -> ularray.add(new lexic_unit("comma",",","NONE"));
-                    case '?' -> ularray.add(new lexic_unit("intg","?","NONE"));
-                    case ':' -> ularray.add(new lexic_unit("dblp",":","NONE"));
-                    case ')' -> ularray.add(new lexic_unit("clopar",")","NONE"));
-                    case '(' -> ularray.add(new lexic_unit("oppar","(","NONE"));
-                    case '{' -> ularray.add(new lexic_unit("cloac","}","NONE"));
-                    default -> ularray.add(new lexic_unit("oppac","{","NONE"));
+                    case ';' -> ularray.add(new lexic_unit(";",";","NONE"));
+                    case ',' -> ularray.add(new lexic_unit(",",",","NONE"));
+                    case ':' -> ularray.add(new lexic_unit(":",":","NONE"));
+                    case ')' -> ularray.add(new lexic_unit(")",")","NONE"));
+                    case '(' -> ularray.add(new lexic_unit("(","(","NONE"));
+                    case '{' -> ularray.add(new lexic_unit("}","}","NONE"));
+                    default -> ularray.add(new lexic_unit("{","{","NONE"));
                 }
                 }
+                else if (is_operator_unary(c)){
+                    switch(c){
+                        case '!' -> ularray.add(new lexic_unit("opauni","!","NONE"));
+                        default -> ularray.add(new lexic_unit("opauni","–","NONE"));
+                        }
+                    }
+                else if (is_string(c)){
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\"");  
+                    while(character!=-1) {
+                        character=b.read();
+                        if(character!=-1 ){
+                            c=(char) character;
+                            if(c == '\r'  || c== '\n'){
+                                throw new LexicalException("Attention !! An  error occured in line "+
+                                String.valueOf(nbrrow) +
+                                " \n expected \" for String statement");
+                            }
+                            else if(c!='"')
+                                {
+                                    sb.append(c);
+                                }
+                            else{
+                                sb.append('"');
+                                break;
+                            }
+                        }
+                    }
+                        if(character==-1)
+                            throw new LexicalException("Attention !! An  error occured in line "+
+                            String.valueOf(nbrrow) +
+                            " \n expected \" for String statement");
+                        else {
+                            String s = sb.toString();
+                            ularray.add(new lexic_unit("str",s,"STRING"));                        }
+
+                }
                 
                 
-                
-                else if(is_operator_bool(c)){
-                    if(c=='!')
-                        ularray.add(new lexic_unit("nologic","!","NONE")); 
-                    else
-                    {                    
+                else if(is_operator_bool(c)){                 
                     character=b.read();
                     if((char)character!=c)
                     {
@@ -248,10 +287,10 @@ public class lexicalAnalyse {
                     }
                     else{
                         switch (c) {
-                            case '|' ->ularray.add(new lexic_unit("orlogic","||","NONE"));                       
-                            default  ->ularray.add(new lexic_unit("andlogic","&&","NONE"));
+                            case '|' ->ularray.add(new lexic_unit("opbol","||","NONE"));                       
+                            default  ->ularray.add(new lexic_unit("opbol","&&","NONE"));
                         }
-                    }}
+                    }
                     
                 }
                 else{
@@ -276,7 +315,15 @@ public class lexicalAnalyse {
                 
             
 
-                
+    public Map <String , lexic_unit >  getLexems(){
+        return this.lexemTable;
+    }            
+    public ArrayList<lexic_unit>  getUlarray(){
+        return this.ularray;
+    }            
+    public  static Map <String , lexic_unit >  getSymbols(){
+        return SymbolTable;
+    }            
                 
 
 

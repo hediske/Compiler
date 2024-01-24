@@ -50,14 +50,12 @@ public class SLR_First_Follow{
         return Arrays.asList(NonTerminal).contains(x);
     }
 
-    public void 
-    
-    GetFirst()
+    public void GetFirst()
     {   
         first.clear();
-        String[] rule;
+         String[] rule;
          String[] UniRule;
-        String firstElem;
+         String firstElem;
         for (var x : gram)
         {
             rule=ExtractRuleElements(x);
@@ -91,7 +89,7 @@ public class SLR_First_Follow{
 
                     boolean ok = false;
                     do {
-                        ok=true;
+                    ok=true;
                     if(checkGenerateEpsilon(firstElem) && y.split(" ").length>1){
                         String follower = y.split(" ")[1];
                         if (!(follower.isEmpty()) && !(follower==null)){
@@ -104,6 +102,8 @@ public class SLR_First_Follow{
                                     first.get(rule[0]).add("First-"+follower);
                                 }
                                 firstElem=follower;
+                                String [] y_transformed = y.split(" ");
+                                y= String.join(" ",Arrays.copyOfRange(y_transformed,1,y_transformed.length));
                             }
 
                         }

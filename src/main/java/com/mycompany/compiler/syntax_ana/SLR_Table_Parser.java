@@ -31,10 +31,7 @@ public class SLR_Table_Parser{
         this.Follows=Follows;
         this.AugGram=generateAugmentedGrammar();
         generateSlrTable();
-        showSets();
-        showActions();
-        showShifts();
-        showShiftProductions();
+
 
 
     }
@@ -45,7 +42,27 @@ public class SLR_Table_Parser{
         return Arrays.asList(NonTerminal).contains(x);
     }
 
-    public void showSets(){
+    public ArrayList<Set<String>> GetSets (){
+        return this.Sets;
+    }
+
+
+    public ArrayList<HashMap<String,Integer>> GetAction (){
+        return this.Action;
+    }
+
+
+    public ArrayList<HashMap<String,Set<Integer>>> GetShift (){
+        return this.Shift;
+    }
+
+
+    public ArrayList<String> GetShiftProductions(){
+        return this.ShiftProductions;
+    }
+
+
+    public void ShowSets(){
         System.out.println("------------------------------Sets----------------------------");
         for (int i = 0; i < Sets.size(); i++) {
             Set<String> currentSet = Sets.get(i);
@@ -54,7 +71,7 @@ public class SLR_Table_Parser{
     }
 
 
-    public void showShifts(){
+    public void ShowShifts(){
         System.out.println("------------------------------Shifts----------------------------");
         for (int i = 0; i < Shift.size(); i++) {
             HashMap<String,Set<Integer>> currentShift = Shift.get(i);
@@ -62,14 +79,14 @@ public class SLR_Table_Parser{
         }
     }
 
-    public void showActions(){
+    public void ShowActions(){
         System.out.println("------------------------------Actions----------------------------");
         for (int i = 0; i < Action.size(); i++) {
             HashMap<String,Integer> currentAction = Action.get(i);
             System.out.println("Action  " + i + ": " + currentAction.toString());
         }
     }
-    public void showShiftProductions(){
+    public void ShowShiftProductions(){
         System.out.println("------------------------------ShiftProductions----------------------------");
         for (int i = 0; i < ShiftProductions.size(); i++) {
             String currentProd = ShiftProductions.get(i);
