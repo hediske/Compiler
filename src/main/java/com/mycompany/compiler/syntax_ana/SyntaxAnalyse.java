@@ -4,8 +4,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -13,7 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.mycompany.compiler.exception.*;
 import com.mycompany.compiler.lexical_ana.lexic_unit;
-import com.mycompany.compiler.lexical_ana.lexicalAnalyse;;
+import com.mycompany.compiler.lexical_ana.lexicalAnalyse;
+import com.mycompany.semantic_ana.SemanticAnalyse;;
 public class SyntaxAnalyse {
     private  String[] gram = new String[]{};
 
@@ -111,34 +114,36 @@ public class SyntaxAnalyse {
     }
 
     private Queue<String> generateInput( ArrayList<lexic_unit>  input_lexic){
-        Queue<String> input = new LinkedList<>();
-            for (lexic_unit s: input_lexic){
-                input.add(s.getUnilexid());
-            }
+        Queue<String> input = input_lexic.stream()
+                .map(s->{
+                    if(s.getType().equals("id"))
+                        return s.getUnilexid()+s.getRangerid();
+                    else {
+                        return s.getUnilexid();
+                    }
+                    
+                    
+                } 
+                )
+                .collect(Collectors.toCollection(LinkedList::new));
             input.add("$");
             return input;
     }
 
     private void  showInput(Queue<String> input){
         System.out.print("Input    : ");
-        java.util.Iterator <String> it = input.iterator();
-        for(;it.hasNext();){
-            String s = it.next();
-            System.out.print(s+" ");
-        }
-        System.out.println();
+        input.forEach(System.out::println);
     }
     private void  showPile(Stack <String> pile){
         System.out.print("Pile     : ");
         System.out.println(pile.toString());
     }
-    
 
     public  void CodeSyntaxAnalyze(lexicalAnalyse ana) throws SyntaxicException , LexicalException{
         if(par!=null && ana!=null){
             Stack<String> pile = new Stack<String>();
             pile.add("0");
-            Queue <String> input = generateInput(  ana.getUlarray());
+            Queue <String> input = generateInput(ana.getUlarray());
             System.out.println("--------------------------------- Start Syntax Verification ----------------------------------");
             showInput(input);
             showPile(pile);
@@ -156,8 +161,7 @@ public class SyntaxAnalyse {
                     pile.add(Action.get(indState).get(s).toString());
                     input.remove();
                     System.out.println("Action   : SHIFT TO "+Action.get(indState).get(s));
-                    System.out.println();
-                    
+                    System.out.println();                    
                 }
                 else if (Shift.get(indState).keySet().contains(s)){
                     Iterator <Integer> iterator = Shift.get(indState).get(s).iterator();
@@ -185,6 +189,7 @@ public class SyntaxAnalyse {
                             int x = Integer.parseInt(pile.peek());
                             pile.add(rule_ex[0]);
                             pile.add(Action.get(x).get(rule_ex[0]).toString());
+                            SemanticAnalyse.treatRule(prod);
                             System.out.println("Action   : REDUCE BY "+prod);
                             System.out.println();
                         
