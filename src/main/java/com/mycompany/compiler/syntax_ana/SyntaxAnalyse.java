@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -16,7 +15,7 @@ import org.json.JSONObject;
 import com.mycompany.compiler.exception.*;
 import com.mycompany.compiler.lexical_ana.lexic_unit;
 import com.mycompany.compiler.lexical_ana.lexicalAnalyse;
-import com.mycompany.semantic_ana.SemanticAnalyse;;
+import com.mycompany.compiler.semantic_ana.SemanticAnalyse;
 public class SyntaxAnalyse {
     private  String[] gram = new String[]{};
 
@@ -68,6 +67,7 @@ public class SyntaxAnalyse {
         par.ShowSets();
         par.ShowShifts();
         par.ShowShiftProductions();
+        CheckIsSlr();
     }
 
 
@@ -116,8 +116,8 @@ public class SyntaxAnalyse {
     private Queue<String> generateInput( ArrayList<lexic_unit>  input_lexic){
         Queue<String> input = input_lexic.stream()
                 .map(s->{
-                    if(s.getType().equals("id"))
-                        return s.getUnilexid()+s.getRangerid();
+                    if(s.getUnilexid().equals("id"))
+                        return s.getUnilexid()+"-"+s.getRangerid();
                     else {
                         return s.getUnilexid();
                     }
@@ -132,11 +132,21 @@ public class SyntaxAnalyse {
 
     private void  showInput(Queue<String> input){
         System.out.print("Input    : ");
-        input.forEach(System.out::println);
+        input.forEach((x) -> System.out.print(x+" "));
+        System.out.println();
     }
     private void  showPile(Stack <String> pile){
         System.out.print("Pile     : ");
         System.out.println(pile.toString());
+    }
+    private String retrieveRangerId (String s_old) throws SyntaxicException{
+        if(s_old.startsWith("id-")){
+            return s_old.substring("id-".length());
+        }
+        else 
+        {     
+           throw new SyntaxicException("Encountred an error in your code ");
+        }    
     }
 
     public  void CodeSyntaxAnalyze(lexicalAnalyse ana) throws SyntaxicException , LexicalException{
@@ -151,9 +161,14 @@ public class SyntaxAnalyse {
             var Shift = this.par.GetShift();
             var ShiftProductions = this.par.GetShiftProductions();
 
-
-             while (!input.isEmpty()){
+            String id="";
+            while (!input.isEmpty()){
                 String s = input.peek();
+                if(s.startsWith("id-")){
+                    id=retrieveRangerId(s);
+                    System.out.println("id nouveau :"+id);
+                    s="id";
+                }
                 String state = pile.peek();
                 int indState = Integer.parseInt(state); 
                 if( Action.get(indState).keySet().contains(s)){
@@ -189,7 +204,12 @@ public class SyntaxAnalyse {
                             int x = Integer.parseInt(pile.peek());
                             pile.add(rule_ex[0]);
                             pile.add(Action.get(x).get(rule_ex[0]).toString());
-                            SemanticAnalyse.treatRule(prod);
+                            if(!prod.contains("id"))
+                                SemanticAnalyse.treatRule(prod);    
+                            else
+                            {
+                              SemanticAnalyse.treatRule(prod,id,ana);
+                            }
                             System.out.println("Action   : REDUCE BY "+prod);
                             System.out.println();
                         
@@ -202,9 +222,9 @@ public class SyntaxAnalyse {
                 }
                 showInput(input);
                 showPile(pile);
-                
+                SemanticAnalyse.ShowStacks();
             }
-
+            SemanticAnalyse.ShowLogs();
  
 
 

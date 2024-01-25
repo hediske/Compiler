@@ -8,7 +8,7 @@
     "I → IL ; I | ɛ",
     "IL → if ( E ) { I } IFS | while ( E ) { I } | id = E | id = function ( Par ) { I } | id = function ( ) { I }",
     "IFS → else { I } | ɛ",
-    "E → id ( P' ) | id ( ) | EL opari E | EL opbol E | EL oprel E | opuni E | ( E ) | EL",
+    "E → id ( P' ) | id ( ) | EL opari E | EL opbol E | EL oprel E | opneg E | opnot E | ( E ) | EL",
     "EL → nb | id | str | litteral | true | false",
     "P → T | T , P",
     "P' → E | E , P'",
@@ -41,6 +41,7 @@
     "opari",
     "opbol",
     "oprel",
-    "opuni"
+    "opneg",
+    "opnot"
   ]
 }

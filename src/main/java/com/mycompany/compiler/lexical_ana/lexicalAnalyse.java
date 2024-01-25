@@ -16,7 +16,7 @@ public class lexicalAnalyse {
         SymbolTable.put("if",new lexic_unit("if",0,"NONE"));
         SymbolTable.put("else",new lexic_unit("else",0,"NONE"));
         SymbolTable.put("char",new lexic_unit("char",0,"NONE"));        
-        SymbolTable.put("String",new lexic_unit("String",0,"NONE"));        
+        SymbolTable.put("string",new lexic_unit("string",0,"NONE"));        
         SymbolTable.put("bool",new lexic_unit("bool",0,"NONE"));        
         SymbolTable.put("int",new lexic_unit("int",0,"NONE"));        
         SymbolTable.put("function",new lexic_unit("function",0,"NONE"));        
@@ -240,8 +240,8 @@ public class lexicalAnalyse {
                 }
                 else if (is_operator_unary(c)){
                     switch(c){
-                        case '!' -> ularray.add(new lexic_unit("opauni","!","NONE"));
-                        default -> ularray.add(new lexic_unit("opauni","–","NONE"));
+                        case '!' -> ularray.add(new lexic_unit("opnot","!","NONE"));
+                        default -> ularray.add(new lexic_unit("opneg","–","NONE"));
                         }
                     }
                 else if (is_string(c)){
@@ -332,9 +332,7 @@ public class lexicalAnalyse {
         for (var u:ularray)
         {
             System.out.println(u);       }
-    }
-    
-    
+    }  
     public void show_lexems ()
     {   int i=0;
         System.out.println("Lexems");
@@ -344,7 +342,6 @@ public class lexicalAnalyse {
         }
         
     }
-
     public void show_symbol ()
     {   int i=0;
         System.out.println("Symbols");
@@ -353,5 +350,24 @@ public class lexicalAnalyse {
             System.out.println("Symbol "+ i +"  :   "+ entry.getKey() + " : " + entry.getValue());
         }
     }    
-    
+    public lexic_unit GetLexem(String key){
+        if(lexemTable.keySet().contains(key))
+            return lexemTable.get(key);
+        else
+            return null;
+    }
+    public String getKeyByRank(String rank){
+        for(String s : lexemTable.keySet()){
+            if(lexemTable.get(s).getRangerid().equals(rank))
+                return s;
+        }
+        return null;
+    }
+    public void SetLexemType(String Type,String key){
+        lexic_unit s = GetLexem(key);
+        if(s!=null){
+            s.setType(Type);
+        }
+    }
+
 }
