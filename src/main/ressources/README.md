@@ -1,4 +1,4 @@
-# Hello 
+## Hello 
 The following files are used for these purposes : 
 `code.txt` : Here you can write the code to compile.
 
@@ -6,10 +6,10 @@ The following files are used for these purposes :
 
 
 For The Grammar THe rules are Below :
-> You need To put a Space betwwen each eleement of the production 
-> You use this arrow for the rule definition `→`
-> this symbol for the epsilon  `ɛ`
-> Uppercase for the Non-Terminal 
+You need To put a Space betwwen each eleement of the production 
+You use this arrow for the rule definition `→`
+this symbol for the epsilon  `ɛ`
+Uppercase for the Non-Terminal 
 ```
 Example :
 E' → E
