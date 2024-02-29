@@ -313,7 +313,7 @@ public class SemanticAnalyse {
         
         
     }
-        
+          
     public  static void ShowStacks(){
         System.out.print("Types    :");
         System.out.println(typeStack.toString());

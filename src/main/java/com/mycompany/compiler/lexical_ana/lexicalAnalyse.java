@@ -9,7 +9,7 @@ import java.util.Map;
 public class lexicalAnalyse {
     private static final Map <String , lexic_unit > SymbolTable = new HashMap<>();
     private Map <String , lexic_unit > lexemTable = new HashMap<>();
-    private ArrayList<lexic_unit> ularray =new ArrayList<>();    
+    private ArrayList<lexic_unit> ularray =new ArrayList<>();  //array of lexic unit  
     static
     {
         SymbolTable.put("while",new lexic_unit("while",0,"NONE"));        
@@ -111,7 +111,7 @@ public class lexicalAnalyse {
                      ularray.add(new lexic_unit("nb",s,"INT"));
                 }
                      
-                else if (is_letter(c))   
+                else if (is_letter(c))    
                 {
                     StringBuilder sb = new StringBuilder();
                      sb.append(c);
@@ -331,7 +331,7 @@ public class lexicalAnalyse {
     {
         for (var u:ularray)
         {
-            System.out.println(u);       }
+            System.out.println("Lexic Unit  :  "+u.getUnilexid()+"  :  "+u.toString());       }
     }  
     public void show_lexems ()
     {   int i=0;

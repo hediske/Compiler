@@ -13,35 +13,6 @@
     "P → T | T , P",
     "P' → E | E , P'",
     "Par → id : T | id : T , Par"
-  ],
-
-  "NonTerminals": [
-    ",",
-    ";",
-    ":",
-    "true",
-    "false",
-    "char",
-    "bool",
-    "string",
-    "int",
-    "(",
-    ")",
-    "{",
-    "}",
-    "if",
-    "else",
-    "while",
-    "function",
-    "=",
-    "nb",
-    "id",
-    "str",
-    "litteral",
-    "opari",
-    "opbol",
-    "oprel",
-    "opneg",
-    "opnot"
   ]
+
 }

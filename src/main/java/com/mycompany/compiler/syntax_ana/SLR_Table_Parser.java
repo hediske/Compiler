@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 public class SLR_Table_Parser{
     private String[ ] gram;
-    private String[ ] NonTerminal;
+    private String[ ] Terminal;
     private ArrayList<String> AugGram;
     private HashMap<String,ArrayList<String>> Follows ;
 
@@ -25,8 +25,8 @@ public class SLR_Table_Parser{
 
 
     
-    public SLR_Table_Parser(String[] gram,String[] NonTerminal,HashMap<String,ArrayList<String>> Follows){    
-        this.NonTerminal=NonTerminal;
+    public SLR_Table_Parser(String[] gram,String[] Terminal,HashMap<String,ArrayList<String>> Follows){    
+        this.Terminal=Terminal;
         this.gram=gram;
         this.Follows=Follows;
         this.AugGram=generateAugmentedGrammar();
@@ -38,8 +38,8 @@ public class SLR_Table_Parser{
 
     
 
-    private Boolean checkElemIsNonTerminal(String x){
-        return Arrays.asList(NonTerminal).contains(x);
+    private Boolean checkElemIsTerminal(String x){
+        return Arrays.asList(Terminal).contains(x);
     }
 
     public ArrayList<Set<String>> GetSets (){
@@ -172,7 +172,7 @@ public class SLR_Table_Parser{
                 if(Prod.indexOf("•")!=-1 && Prod.indexOf("•")<Prod.length()-1)
                 {
                     String next = Prod.substring(Prod.indexOf("•")+2).split("\\s+")[0];
-                    if(!checkElemIsNonTerminal(next)  && !next.equals("ɛ")){
+                    if(!checkElemIsTerminal(next)  && !next.equals("ɛ")){
                         for(String s: AugGram){
                             if (SLR_First_Follow.ExtractRuleElements(s)[0].equals(next)){
                                 String tr = addDot(s);

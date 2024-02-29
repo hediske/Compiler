@@ -8,12 +8,12 @@ import java.util.Map;
 
 public class SLR_First_Follow{
     private String[] gram;
-    private String[] NonTerminal;
+    private String[] Terminal;
     private HashMap<String,ArrayList<String>> first= new HashMap<String,ArrayList<String>>();
     private HashMap<String,ArrayList<String>> follow= new HashMap<String,ArrayList<String>>();
-    public SLR_First_Follow(String[] gram,String[] NonTerminal){
+    public SLR_First_Follow(String[] gram,String[] Terminal){
         this.gram= gram;
-        this.NonTerminal = NonTerminal;
+        this.Terminal = Terminal;
     }
  
     protected void ShowRules(){
@@ -46,8 +46,8 @@ public class SLR_First_Follow{
 
     }
 
-    private Boolean checkElemIsNonTerminal(String x){
-        return Arrays.asList(NonTerminal).contains(x);
+    private Boolean checkElemIsTerminal(String x){
+        return Arrays.asList(Terminal).contains(x);
     }
 
     public void GetFirst()
@@ -65,7 +65,7 @@ public class SLR_First_Follow{
                 if (y.charAt(0)==' ') 
                      y=y.substring(1);
                 firstElem=y.split(" ")[0];
-                if ((checkElemIsNonTerminal(firstElem)) || (firstElem.equals("ɛ")) ){
+                if ((checkElemIsTerminal(firstElem)) || (firstElem.equals("ɛ")) ){
                     
                     if(!(first.containsKey(rule[0]))){
                         ArrayList <String> res = new ArrayList<>();
@@ -93,7 +93,7 @@ public class SLR_First_Follow{
                     if(checkGenerateEpsilon(firstElem) && y.split(" ").length>1){
                         String follower = y.split(" ")[1];
                         if (!(follower.isEmpty()) && !(follower==null)){
-                            if(checkElemIsNonTerminal(follower) || follower.equals("ɛ")){
+                            if(checkElemIsTerminal(follower) || follower.equals("ɛ")){
                                 first.get(rule[0]).add(follower);
                             }
                             else{
@@ -139,14 +139,17 @@ public class SLR_First_Follow{
 
                         String Terminal = el.substring(el.indexOf("-")+1);
                         iterator.remove();
-                        Iterator<String> it2 = first.get(Terminal).iterator();
-                        while (it2.hasNext()) {
-                            String ch = it2.next();
-                            if (!first.get(key).contains(ch) && !ch.equals("ɛ")) {
-                                AddedList.add(ch);
+                        if(first.containsKey(Terminal)){
+                            
+                            Iterator<String> it2 = first.get(Terminal).iterator();
+                            while (it2.hasNext()) {
+                                String ch = it2.next();
+                                if (!first.get(key).contains(ch) && !ch.equals("ɛ")) {
+                                    AddedList.add(ch);
+                                }
                             }
                         }
-                    }
+                        }
                 }  
                 value.addAll(AddedList );
             }
@@ -185,7 +188,7 @@ public class SLR_First_Follow{
                 Param=ch.split("\\ ");
                 for (int i=0;i<Param.length;i++){
                     String p = Param[i];
-                    if  (!checkElemIsNonTerminal(p) && !p.equals("ɛ") && !p.isEmpty() && !(p==null))
+                    if  (!checkElemIsTerminal(p) && !p.equals("ɛ") && !p.isEmpty() && !(p==null))
                     {
                         if(i==Param.length-1)//lastelement
                             {
@@ -205,7 +208,7 @@ public class SLR_First_Follow{
                             }
                         else 
                             {
-                                if(checkElemIsNonTerminal(Param[i+1]))
+                                if(checkElemIsTerminal(Param[i+1]))
                                 {
                                     if(!(follow.containsKey(p))){
                                         ArrayList <String> res = new ArrayList<>();
@@ -247,7 +250,7 @@ public class SLR_First_Follow{
                                                 else 
                                                     {
                                                     next = Param[index];
-                                                    if(checkElemIsNonTerminal(next))
+                                                    if(checkElemIsTerminal(next))
                                                         {
                                                             if (!( follow.get(p).contains(next) ))
                                                             {

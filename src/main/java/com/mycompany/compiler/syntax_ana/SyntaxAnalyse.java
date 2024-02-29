@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -19,13 +20,29 @@ import com.mycompany.compiler.semantic_ana.SemanticAnalyse;
 public class SyntaxAnalyse {
     private  String[] gram = new String[]{};
 
-     private String[] NonTerminal = new String[]{};
+     private String[] Terminal = new String[]{};
+
+    private String[] getTerminal(String[] gram){
+        if(gram.length!=0){
+            ArrayList<String> res = new ArrayList<>();
+            Arrays.stream(gram)
+            .map(x -> Arrays.copyOfRange(x.split(" "), 2, x.split(" ").length)  )
+            .forEach(
+                (String x []) -> Arrays.stream(x)
+                    .filter((String element) -> element.equals(element.toLowerCase()))
+                    .forEach((String y)->{res.add(y);}));
+            return res.toArray(new String[0]);
+            
+        }
+        System.out.println("No Grammar Found !");
+        return new String[0];
+        
+    }
 
     private void loadGrammar() throws IOException , JSONException{
         String JsonFilePath = "src\\main\\ressources\\grammar.json";
         String JsonString;
         ArrayList<String> gram = new ArrayList<String>();
-        ArrayList<String> NonTerminal = new ArrayList<String>();
         try{
             JsonString = new String(Files.readAllBytes(Paths.get(JsonFilePath)));
             JSONObject Grammar = new JSONObject(JsonString);
@@ -33,12 +50,8 @@ public class SyntaxAnalyse {
             for (int i =0;i<GramElemnts.length();i++){
                 gram.add(GramElemnts.getString(i));
             }
-            JSONArray nonterminal =Grammar.getJSONArray("NonTerminals");
-            for (int i =0;i<nonterminal.length();i++){
-                NonTerminal.add(nonterminal.getString(i));
-            }
             this.gram=gram.toArray(new String[0]);
-            this.NonTerminal=NonTerminal.toArray(new String[0]);
+            this.Terminal=getTerminal(this.gram);
         }
         catch(IOException e){
             System.out.println("Error , Missing grammar JSON file !!!");
@@ -54,14 +67,14 @@ public class SyntaxAnalyse {
     public SyntaxAnalyse() throws IOException , JSONException{
         loadGrammar();
         System.out.println("---------------------GRAMMAR LOADED SUCCESSFULLY---------------------");
-        sl = new SLR_First_Follow(gram,NonTerminal);
+        sl = new SLR_First_Follow(gram,Terminal);
         for (String s : this.gram)
         System.out.println(s);
         sl.GetFirst();
         sl.ShowFirst();
         sl.GetFollow();
         sl.ShowFollow();
-        SLR_Table_Parser par = new SLR_Table_Parser(gram, NonTerminal, sl.GetListFollow());
+        SLR_Table_Parser par = new SLR_Table_Parser(gram, Terminal, sl.GetListFollow());
         this.par = par; 
         par.ShowActions();
         par.ShowSets();
@@ -166,7 +179,6 @@ public class SyntaxAnalyse {
                 String s = input.peek();
                 if(s.startsWith("id-")){
                     id=retrieveRangerId(s);
-                    System.out.println("id nouveau :"+id);
                     s="id";
                 }
                 String state = pile.peek();
