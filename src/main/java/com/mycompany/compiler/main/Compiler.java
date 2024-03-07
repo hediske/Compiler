@@ -28,19 +28,19 @@ public class Compiler {
             System.out.println("Fichier "+file+" chargé avec succés");
             System.out.println("----------------------------COMPILIING--------------------------------");
             
-        try (PushbackReader b = new PushbackReader(fileReader)) {
-            lexicalAnalyse ana =new lexicalAnalyse(b);
-            ana.show_ularray();
-            ana.show_lexems();
-            ana.show_symbol();
-            SyntaxAnalyse sn = new SyntaxAnalyse();
-            sn.CodeSyntaxAnalyze(ana);
-            s.close();  
-        }
-        } catch (FileNotFoundException e) {
-            System.out.println("Attenetion ! erreur dans le fichier à compiler ");
-        
+            try (PushbackReader b = new PushbackReader(fileReader)) {
+                lexicalAnalyse ana =new lexicalAnalyse(b);
+                ana.show_ularray();
+                ana.show_lexems();
+                ana.show_symbol();
+                SyntaxAnalyse sn = new SyntaxAnalyse();
+                sn.CodeSyntaxAnalyze(ana);
+                s.close();  
             }
+            } catch (FileNotFoundException e) {
+                System.out.println("Attenetion ! erreur dans le fichier à compiler ");
+                e.printStackTrace();
+                }
         catch (LexicalException | IOException e) {
             System.out.println(e.getMessage());
     }

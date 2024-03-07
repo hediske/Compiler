@@ -181,7 +181,7 @@ public class lexicalAnalyse {
                          }
                          else
                          {
-                             ularray.add(new lexic_unit("oprel","=","NONE"));
+                             ularray.add(new lexic_unit("=","=","NONE"));
                          }
                          
                      }
