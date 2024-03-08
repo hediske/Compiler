@@ -127,13 +127,13 @@ The grammar must respect these rules : 	<ol>
 
 <h4>Example</h4>
 
-> E' → E
-E → E + T
-E → T
-T → T * F
-T → F
-F → ( E )
-F → id
+> E' → E<br>
+>E → E + T<br>
+>E → T<br>
+>T → T * F<br>
+>T → F<br>
+>F → ( E )<br>
+>F → id<br>
 
 
 To add a code for testing the Syntax analyser ! your file must be also located under **src/ressources**
